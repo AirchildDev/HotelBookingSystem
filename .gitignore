@@ -1,0 +1,6 @@
+HotelEnv/
+__pycache__/
+*.pyc
+hotel.db
+logs/
+.env
