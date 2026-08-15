@@ -31,12 +31,12 @@ def process_logs():
     print(f"WARNING: {warnings}")
     print(f"ERROR: {errors}")
 
+    print("\nLog processing completed.")
+
     if errors > 0:
-        print("\nSystem Status: ERROR")
+        print("Historical errors detected in log.")
 
-    elif warnings > 0:
-        print("\nSystem Status: WARNING")
+    if warnings > 0:
+        print("Warnings detected in log.")
 
-    else:
-        print("\nSystem Status: OK")
-        
+    print("System Status: CHECKED")
