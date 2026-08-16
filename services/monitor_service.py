@@ -2,7 +2,6 @@ import sqlite3
 from logger import logger
 from services.recovery_service import recover_database
 
-
 def check_database():
 
     try:
@@ -94,13 +93,38 @@ def monitor_application():
 
     recovery = recover_database()
 
-    if recovery:
-        logger.info(
-            "Automatic recovery completed"
-        )
-    else:
+    if not recovery:
+
         logger.error(
             "Automatic recovery failed"
         )
+
+        return False
+
+    logger.info(
+        "Automatic recovery completed"
+    )
+
+    # VERIFY SYSTEM AFTER RECOVERY
+
+    logger.info(
+        "Verifying system after recovery"
+    )
+
+    database = check_database()
+    rooms = check_rooms()
+    bookings = check_bookings()
+
+    if database and rooms and bookings:
+
+        logger.info(
+            "System recovery verification: SUCCESS"
+        )
+
+        return True
+
+    logger.error(
+        "System recovery verification: FAILED"
+    )
 
     return False
