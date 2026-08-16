@@ -1,5 +1,6 @@
 import sqlite3
 from logger import logger
+from services.recovery_service import recover_database
 
 
 def check_database():
@@ -86,5 +87,20 @@ def monitor_application():
     logger.warning(
         "Application monitoring: SYSTEM CHECK FAILED"
     )
+
+    logger.info(
+        "Automatic recovery started"
+    )
+
+    recovery = recover_database()
+
+    if recovery:
+        logger.info(
+            "Automatic recovery completed"
+        )
+    else:
+        logger.error(
+            "Automatic recovery failed"
+        )
 
     return False
