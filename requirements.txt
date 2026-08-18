@@ -8,3 +8,6 @@ pluggy==1.6.0
 Pygments==2.20.0
 pytest==9.1.1
 tkcalendar==1.6.1
+
+psycopg2-binary
+python-dotenv
