@@ -1,7 +1,5 @@
-import sqlite3
-
-DATABASE = "hotel.db"
+from database.postgres_connection import get_postgres_connection
 
 
 def get_connection():
-    return sqlite3.connect(DATABASE)
+    return get_postgres_connection()

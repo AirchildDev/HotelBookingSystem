@@ -1,9 +1,9 @@
-import sqlite3
+from database.connection import get_connection
 
 
 def get_bookings():
 
-    con = sqlite3.connect("hotel.db")
+    con = get_connection()
     cur = con.cursor()
 
     cur.execute("""
@@ -20,6 +20,7 @@ def get_bookings():
 
     rows = cur.fetchall()
 
+    cur.close()
     con.close()
 
     return rows

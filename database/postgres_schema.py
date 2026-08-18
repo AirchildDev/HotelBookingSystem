@@ -1,13 +1,13 @@
-from database.connection import get_connection
+from database.postgres_connection import get_postgres_connection
 
 
-def create_tables():
-    con = get_connection()
+def create_postgres_tables():
+
+    con = get_postgres_connection()
     cur = con.cursor()
 
-    # USERS
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS users(
+        CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             fullname TEXT,
             phonenum TEXT,
@@ -17,20 +17,18 @@ def create_tables():
         )
     """)
 
-    # ROOMS
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS rooms(
+        CREATE TABLE IF NOT EXISTS rooms (
             id SERIAL PRIMARY KEY,
             room_number TEXT,
             room_type TEXT,
-            price NUMERIC(10,2),
+            price NUMERIC(10, 2),
             status TEXT
         )
     """)
 
-    # BOOKINGS
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS bookings(
+        CREATE TABLE IF NOT EXISTS bookings (
             id SERIAL PRIMARY KEY,
             room_number TEXT,
             customer_name TEXT,
@@ -46,3 +44,7 @@ def create_tables():
     con.close()
 
     print("PostgreSQL tables created successfully")
+
+
+if __name__ == "__main__":
+    create_postgres_tables()

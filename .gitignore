@@ -4,3 +4,5 @@ __pycache__/
 hotel.db
 logs/
 .env
+
+backup/

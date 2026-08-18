@@ -1,13 +1,18 @@
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import messagebox as msg
-import sqlite3
+from database.connection import get_connection
 import bcrypt
 
 
 def signup_page(parent, show_login):
 
-    signup_frame = Frame(parent, bg="#141414", width=1200, height=650)
+    signup_frame = Frame(
+        parent,
+        bg="#141414",
+        width=1200,
+        height=650
+    )
 
     # BACKGROUND IMAGE
 
@@ -20,7 +25,10 @@ def signup_page(parent, show_login):
 
     photo = ImageTk.PhotoImage(img)
 
-    bg_label = Label(signup_frame, image=photo)
+    bg_label = Label(
+        signup_frame,
+        image=photo
+    )
 
     bg_label.place(
         x=0,
@@ -36,23 +44,20 @@ def signup_page(parent, show_login):
     def hash_password(password):
 
         return bcrypt.hashpw(
-        password.encode("utf-8"),
-        bcrypt.gensalt()
-    ).decode("utf-8")
+            password.encode("utf-8"),
+            bcrypt.gensalt()
+        ).decode("utf-8")
 
     # SIGNUP FUNCTION
 
     def sign():
 
-        fullname = entry2.get()
-        phonenum = entry3.get()
-        username = entry4.get()
-
+        fullname = entry2.get().strip()
+        phonenum = entry3.get().strip()
+        username = entry4.get().strip()
         raw_password = entry5.get()
 
-        password = hash_password(
-            raw_password
-        )
+        # CHECK EMPTY FIELDS
 
         if (
             fullname == ""
@@ -68,49 +73,101 @@ def signup_page(parent, show_login):
 
             return
 
+        # HASH PASSWORD
+
+        password = hash_password(raw_password)
+
+        con = None
+        cur = None
+
         try:
 
-            con = sqlite3.connect("hotel.db")
+            # CONNECT TO POSTGRESQL
+
+            con = get_connection()
             cur = con.cursor()
 
-            cur.execute("""
-            INSERT INTO users(
-                fullname,
-                phonenum,
-                username,
-                password
+            # CHECK USERNAME
+
+            cur.execute(
+                """
+                SELECT username
+                FROM users
+                WHERE username = %s
+                """,
+                (username,)
             )
-            VALUES(?,?,?,?)
-            """, (
-                fullname,
-                phonenum,
-                username,
-                password
-            ))
+
+            existing_user = cur.fetchone()
+
+            if existing_user:
+
+                msg.showwarning(
+                    "Warning",
+                    "Username Already Exists"
+                )
+
+                return
+
+            # CREATE USER
+
+            cur.execute(
+                """
+                INSERT INTO users(
+                    fullname,
+                    phonenum,
+                    username,
+                    password,
+                    role
+                )
+                VALUES(%s, %s, %s, %s, %s)
+                """,
+                (
+                    fullname,
+                    phonenum,
+                    username,
+                    password,
+                    "user"
+                )
+            )
+
+            # SAVE TO DATABASE
 
             con.commit()
-            con.close()
 
             msg.showinfo(
-                "Alert",
+                "Success",
                 "Successfully Registered"
             )
 
-            # CLEAR ENTRIES
+            # CLEAR FORM
 
             entry2.delete(0, END)
             entry3.delete(0, END)
             entry4.delete(0, END)
             entry5.delete(0, END)
 
-            show_login()     # GOES TO LOGIN PAGE
+            # GO TO LOGIN
 
-        except sqlite3.IntegrityError:
+            show_login()
 
-            msg.showinfo(
-                "Alert",
-                "Username Already Exists"
+        except Exception as error:
+
+            if con:
+                con.rollback()
+
+            msg.showerror(
+                "Database Error",
+                f"Unable to register user:\n{error}"
             )
+
+        finally:
+
+            if cur:
+                cur.close()
+
+            if con:
+                con.close()
 
     # HOVER EFFECT
 
@@ -148,7 +205,7 @@ def signup_page(parent, show_login):
 
     label1.place(x=450, y=60)
 
-    # FULLNAME
+    # FULL NAME
 
     label2 = Label(
         signup_frame,
@@ -167,7 +224,7 @@ def signup_page(parent, show_login):
 
     entry2.place(x=500, y=175)
 
-    # PHONE 
+    # PHONE
 
     label3 = Label(
         signup_frame,
@@ -186,7 +243,7 @@ def signup_page(parent, show_login):
 
     entry3.place(x=500, y=235)
 
-    # USERNAME 
+    # USERNAME
 
     label4 = Label(
         signup_frame,
@@ -205,7 +262,7 @@ def signup_page(parent, show_login):
 
     entry4.place(x=500, y=295)
 
-    # PASSWORD 
+    # PASSWORD
 
     label5 = Label(
         signup_frame,
@@ -225,7 +282,7 @@ def signup_page(parent, show_login):
 
     entry5.place(x=500, y=355)
 
-    # BUTTON 
+    # SIGNUP BUTTON
 
     btn = Button(
         signup_frame,
@@ -243,7 +300,7 @@ def signup_page(parent, show_login):
     btn.bind("<Enter>", hover)
     btn.bind("<Leave>", no_hover)
 
-    # LOGIN LABEL 
+    # LOGIN LABEL
 
     label6 = Label(
         signup_frame,
@@ -256,7 +313,11 @@ def signup_page(parent, show_login):
 
     label6.place(x=520, y=500)
 
-    label6.bind("<Button-1>", lambda e: show_login())
+    label6.bind(
+        "<Button-1>",
+        lambda e: show_login()
+    )
+
     label6.bind("<Enter>", hover)
     label6.bind("<Leave>", no_hover)
 

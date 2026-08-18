@@ -1,28 +1,45 @@
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import messagebox as msg
-import sqlite3
+from database.connection import get_connection
 import session
 import bcrypt
 
 
 def login_page(parent, show_signup, show_home):
 
-    login_frame = Frame(parent, bg="#80050b", width=1200, height=650)
+    login_frame = Frame(
+        parent,
+        bg="#80050b",
+        width=1200,
+        height=650
+    )
 
-    # BACKGROUND IMAGE 
+    # BACKGROUND IMAGE
 
     img = Image.open("lounge_dark_blur.jpg")
-    img = img.resize((1200, 650), Image.Resampling.LANCZOS)
+    img = img.resize(
+        (1200, 650),
+        Image.Resampling.LANCZOS
+    )
 
     photo = ImageTk.PhotoImage(img)
 
-    bg_label = Label(login_frame, image=photo)
-    bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+    bg_label = Label(
+        login_frame,
+        image=photo
+    )
+
+    bg_label.place(
+        x=0,
+        y=0,
+        relwidth=1,
+        relheight=1
+    )
 
     bg_label.image = photo
 
-    # LOGIN FUNCTION 
+    # LOGIN FUNCTION
 
     def login():
 
@@ -38,48 +55,61 @@ def login_page(parent, show_signup, show_home):
 
             return
 
-        con = sqlite3.connect("hotel.db")
-        cur = con.cursor()
+        try:
 
-    # GET USER BY USERNAME
-        cur.execute("""
-            SELECT username, role, password
-            FROM users
-            WHERE username = ?
-        """, (username,))
+            con = get_connection()
+            cur = con.cursor()
 
-        result = cur.fetchone()
+            # GET USER BY USERNAME
 
-        con.close()
+            cur.execute("""
+                SELECT username, role, password
+                FROM users
+                WHERE username = %s
+            """, (username,))
 
-    # CHECK PASSWORD
-        if result and bcrypt.checkpw(
-            password.encode("utf-8"),
-            result[2].encode("utf-8")
-        ):
+            result = cur.fetchone()
 
-            session.current_user = result[0]
-            session.current_role = result[1]
+            cur.close()
+            con.close()
 
-            msg.showinfo(
-                "Alert",
-                "Login Successful"
+            # CHECK PASSWORD
+
+            if result and bcrypt.checkpw(
+                password.encode("utf-8"),
+                result[2].encode("utf-8")
+            ):
+
+                session.current_user = result[0]
+                session.current_role = result[1]
+
+                msg.showinfo(
+                    "Alert",
+                    "Login Successful"
+                )
+
+                # CLEAR ENTRIES
+
+                entry1.delete(0, END)
+                entry2.delete(0, END)
+
+                show_home()
+
+            else:
+
+                msg.showwarning(
+                    "Warning",
+                    "Unauthorized Access"
+                )
+
+        except Exception as error:
+
+            msg.showerror(
+                "Database Error",
+                f"Unable to connect to database:\n{error}"
             )
 
-        # CLEAR ENTRIES
-            entry1.delete(0, END)
-            entry2.delete(0, END)
-
-            show_home()
-
-        else:
-
-            msg.showwarning(
-                "Warning",
-                "Unauthorized Access"
-            )
-
-    #  HOVER EFFECT 
+    # HOVER EFFECT
 
     def hover(event):
         label3.config(fg="#aaa00c")
@@ -87,7 +117,7 @@ def login_page(parent, show_signup, show_home):
     def no_hover(event):
         label3.config(fg="#f5e173")
 
-    # TITLE 
+    # TITLE
 
     label = Label(
         login_frame,
@@ -99,7 +129,7 @@ def login_page(parent, show_signup, show_home):
 
     label.place(x=500, y=100)
 
-    # USERNAME 
+    # USERNAME
 
     label1 = Label(
         login_frame,
@@ -118,7 +148,7 @@ def login_page(parent, show_signup, show_home):
 
     entry1.place(x=520, y=205)
 
-    # PASSWORD 
+    # PASSWORD
 
     label2 = Label(
         login_frame,
@@ -138,7 +168,7 @@ def login_page(parent, show_signup, show_home):
 
     entry2.place(x=520, y=265)
 
-    # LOGIN BUTTON 
+    # LOGIN BUTTON
 
     login_btn = Button(
         login_frame,
@@ -168,6 +198,9 @@ def login_page(parent, show_signup, show_home):
 
     label3.bind("<Enter>", hover)
     label3.bind("<Leave>", no_hover)
-    label3.bind("<Button-1>", lambda e: show_signup())
+    label3.bind(
+        "<Button-1>",
+        lambda e: show_signup()
+    )
 
     return login_frame
