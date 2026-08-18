@@ -29,7 +29,7 @@ The application was migrated from SQLite to PostgreSQL. The migration introduced
 
 | Administrator | My bookings | GitHub Actions CI | GitHub Actions CD |
 |---|---|---|
-| <img src="assets/admin-screen.png" alt="Admin screen placeholder" width="300"> | <img src="assets/booking-screen.png" alt="Booking placeholder" width="300"> | <img src="assets/github-actions-ci.png" alt="GitHub Actions CI placeholder" width="300"> | <img src="assets/github-actions-cd.png" alt="GitHub Actions CD placeholder" width="300"> |
+| <img src="assets/admin-screen.png" alt="Admin screen placeholder" width="225"> | <img src="assets/booking-screen.png" alt="Booking placeholder" width="225"> | <img src="assets/github-actions-ci.png" alt="GitHub Actions CI placeholder" width="225"> | <img src="assets/github-actions-cd.png" alt="GitHub Actions CD placeholder" width="225"> |
 
 ## Technology Stack
 
@@ -88,10 +88,8 @@ Local-only items such as .env, HotelEnv, logs, and backup should not be committe
 
 ### Clone the repository
 
-    git clone YOUR_REPOSITORY_URL
+    git clone https://github.com/AirchildDev/HotelBookingSystem
     cd HotelBookingSystem
-
-Replace YOUR_REPOSITORY_URL with the GitHub repository URL.
 
 ### Create and activate a virtual environment
 
