@@ -27,9 +27,9 @@ The application was migrated from SQLite to PostgreSQL. The migration introduced
 |---|---|---|
 | <img src="assets/ui-screen.png" alt="UI screen placeholder" width="300"> | <img src="assets/signup-screen.png" alt="Signup screen placeholder" width="300"> | <img src="assets/login-screen.png" alt="Login screen placeholder" width="300"> |
 
-| Administrator | My bookings | GitHub Actions CI | GitHub Actions CD |
+| Administrator | My bookings | GitHub Actions CI | 
 |---|---|---|
-| <img src="assets/admin-screen.png" alt="Admin screen placeholder" width="225"> | <img src="assets/booking-screen.png" alt="Booking placeholder" width="225"> | <img src="assets/github-actions-ci.png" alt="GitHub Actions CI placeholder" width="225"> | <img src="assets/github-actions-cd.png" alt="GitHub Actions CD placeholder" width="225"> |
+| <img src="assets/admin-screen.png" alt="Admin screen placeholder" width="300"> | <img src="assets/booking-screen.png" alt="Booking placeholder" width="300"> | <img src="assets/github-actions-ci.png" alt="GitHub Actions CI placeholder" width="300"> | 
 
 ## Technology Stack
 
