@@ -1,334 +1,340 @@
 # Hotel Booking System
 
-# Project Overview
+## Overview
 
-The Hotel Booking System is a Python based desktop application designed to manage hotel rooms, customers, bookings, authentication, administration, monitoring, logging, automated testing, deployment automation, and basic system recovery.
+Hotel Booking System is a Python desktop application for managing users, rooms, reservations, cancellations, and hotel operations. It uses Tkinter for the graphical interface and PostgreSQL for the active database.
 
-The application uses Tkinter for the graphical user interface and SQLite for persistent data storage.
+The application was migrated from SQLite to PostgreSQL. The migration introduced centralized database connections, environment-based configuration, PostgreSQL-compatible queries, automated tests, and GitHub Actions continuous integration.
 
-The project has also been extended with basic Site Reliability Engineering practices.
+## Features
 
-The SRE implementation focuses on monitoring application components, detecting failures, processing application logs, running automated tests, performing continuous integration, automating deployment, recovering missing database structures, and verifying system health after recovery.
+| Feature | Description |
+|---|---|
+| Registration and login | Creates and authenticates hotel-system users. |
+| Administrator access | Supports hotel administration workflows. |
+| Room management | Adds, views, updates, and deletes rooms. |
+| Booking management | Lets authenticated users create and view reservations. |
+| Booking cancellation | Lets users cancel their own bookings. |
+| Availability validation | Prevents conflicting bookings for the same room and dates. |
+| PostgreSQL database | Stores users, rooms, and bookings in a relational database. |
+| Monitoring and recovery | Includes services that check database and application health. |
+| Automated testing | Uses Python unittest tests. |
+| Continuous integration | GitHub Actions runs tests against a temporary PostgreSQL database. |
 
+## Screenshots
 
-# Project Objectives
+| UI screen | Signup screen | Login screen |
+|---|---|---|
+| <img src="assets/ui-screen.png" alt="UI screen placeholder" width="300"> | <img src="assets/signup-screen.png" alt="Signup screen placeholder" width="300"> | <img src="assets/login-screen.png" alt="Login screen placeholder" width="300"> |
 
-The main objectives of this project are to build a functional hotel booking application while applying basic software reliability and automation practices.
+| Administrator | My bookings | GitHub Actions CI | GitHub Actions CD |
+|---|---|---|
+| <img src="assets/admin-screen.png" alt="Admin screen placeholder" width="300"> | <img src="assets/booking-screen.png" alt="Booking placeholder" width="300"> | <img src="assets/github-actions-ci.png" alt="GitHub Actions CI placeholder" width="300"> | <img src="assets/github-actions-cd.png" alt="GitHub Actions CD placeholder" width="300"> |
 
-The project provides functionality for:
+## Technology Stack
 
-User registration
+| Technology | Purpose |
+|---|---|
+| Python | Core application language. |
+| Tkinter | Desktop graphical user interface. |
+| PostgreSQL | Relational database for users, rooms, and bookings. |
+| psycopg2-binary | Python PostgreSQL driver. |
+| python-dotenv | Loads local environment variables from the .env file. |
+| unittest | Automated test framework. |
+| Git and GitHub | Version control and repository hosting. |
+| GitHub Actions | Continuous integration. |
 
-User login
+## Project Structure
 
-Password hashing
-
-Role based access
-
-Administrator access
-
-Room management
-
-Room availability checking
-
-Room booking
-
-Booking management
-
-Database management
-
-Application monitoring
-
-Failure detection
-
-Application logging
-
-Log processing
-
-Automated testing
-
-Continuous integration
-
-Deployment automation
-
-Automatic database recovery
-
-Recovery verification
-
-
-# Technology Stack
-
-The project was developed using the following technologies.
-
-Python
-
-Tkinter
-
-SQLite
-
-Git
-
-GitHub
-
-GitHub Actions
-
-Python unittest
-
-Python logging
-
-
-# Project Structure
-
-The project is organized into application modules, database modules, service modules, utility modules, tests, and GitHub Actions workflows.
-
-   text
-HotelBookingSystem
-
-    database
+    HotelBookingSystem/
+      .github/
+        workflows/
+          ci.yml
+      assets/
+      database/
         connection.py
+        postgres_connection.py
+        postgres_schema.py
         schema.py
-        init.py
-
-    services
+      services/
         booking_service.py
         monitor_service.py
         recovery_service.py
         room_service.py
-        log_service.py
-        init.py
-
-    tests
+      tests/
         test_hotel_system.py
         test_recovery.py
-        init.py
+      bookingapp.py
+      main_hotelapp.py
+      signin.py
+      signup.py
+      requirements.txt
+      .env.example
+      .gitignore
+      README.md
 
-    gui
-        init.py
+Local-only items such as .env, HotelEnv, logs, and backup should not be committed to GitHub.
 
-    utils
-        init.py
+## Prerequisites
 
-    logs
+| Requirement | Recommendation |
+|---|---|
+| Python | Python 3.12 or a compatible Python 3 version. |
+| PostgreSQL | PostgreSQL 16 or later is recommended. |
+| Git | Required to clone, commit, and push the repository. |
+| Code editor | VS Code or another editor is recommended. |
 
-    about_us.py
-    admin.py
-    bookingapp.py
-    cleanup.py
-    gallery.py
-    HotelDatabaseConnect.py
-    logger.py
-    main_hotelapp.py
-    make_admin.py
-    session.py
-    signin.py
-    signup.py
-    requirements.txt
+## Installation
 
-    .gitignore
+### Clone the repository
 
-    .github
-        workflows
-            ci.yml
-            deploy.yml
+    git clone YOUR_REPOSITORY_URL
+    cd HotelBookingSystem
 
+Replace YOUR_REPOSITORY_URL with the GitHub repository URL.
 
-## Application Features
+### Create and activate a virtual environment
 
-# User Registration
+    python -m venv HotelEnv
+    HotelEnv\Scripts\Activate.ps1
 
-The registration system allows users to create accounts using their full name, phone number, username, and password.
-The system validates required fields before creating an account.
-Usernames are unique.
-Passwords are hashed before being stored in the database.
+When activation succeeds, the PowerShell prompt begins with (HotelEnv).
 
-# User Login
+### Install dependencies
 
-Registered users can log into the application using their username and password.
-The login system compares the hashed password against the stored password hash.
-Successful authentication creates a user session.
-The session stores the current username and role.
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
 
-# Password Security
+The requirements file must include at least:
 
-Passwords are not stored as plain text.
-The application uses Bcrypt hashing before storing passwords in the SQLite database.
-The hashing process converts the password into a fixed length hash before it is stored.
+    psycopg2-binary
+    python-dotenv
 
-# Role Based Access
+Add other packages used by the Tkinter interface, such as a date widget package, when applicable.
 
-The application supports user roles.
-The default role for a new account is user.
-An administrator account can be assigned the admin role.
-The administrator role provides access to administrative functionality.
+## PostgreSQL Setup
 
-# Room Management
+### Create the database
 
-The administrator can manage hotel rooms.
+Open PostgreSQL using an authorized administrator account and run:
 
-Room information includes:
-Room number
-Room type
-Room price
-Room status
+    CREATE DATABASE hotel_booking;
 
-The application checks room availability before allowing bookings.
+### Configure the local environment file
 
-# Booking Management
+Create a file named .env in the project root. Do not put it inside HotelEnv.
 
-Users can select available rooms and provide booking information.
+    DB_HOST=localhost
+    DB_PORT=5432
+    DB_NAME=hotel_booking
+    DB_USER=postgres
+    DB_PASSWORD=your_postgresql_password
 
-The booking system stores:
-Room number
-Customer name
-Check in date
-Check out date
-Username
+The .env file contains private credentials. Keep it local and never commit it.
 
-The system checks booking information against existing reservations.
+Create a safe .env.example template for other developers:
 
-This helps prevent overlapping room reservations.
+    DB_HOST=localhost
+    DB_PORT=5432
+    DB_NAME=hotel_booking
+    DB_USER=postgres
+    DB_PASSWORD=your_database_password
 
-## Database
+### Create database tables
 
-The application uses SQLite as its database.
-The main database file is:
-hotel.db
+After configuring .env, run this from the project root:
 
-The database contains the following main tables.
+    python -c "from database.schema import create_tables; create_tables(); print('Database tables created successfully')"
 
-users
-rooms
-bookings
+The application database contains entities for users, rooms, and bookings.
 
-# The database schema is created using:
+## Verify the Database Connection
 
-database/schema.py
-The database connection is handled through:
-database/connection.py
+Run:
 
-## Site Reliability Engineering Implementation
+    python -c "from database.connection import get_connection; con=get_connection(); print('PostgreSQL connection successful'); con.close()"
 
-The project was extended to demonstrate basic Site Reliability Engineering practices.
-The SRE implementation follows the reliability cycle:
+Expected output:
 
-Monitor
-Detect
-Recover
-Verify
+    PostgreSQL connection successful
 
-The system also uses automated testing and CI CD automation.
+Verify the room service:
 
-# Application Monitoring
+    python -c "from services.room_service import get_rooms; print(get_rooms())"
 
-The application contains a monitoring service that checks important components of the hotel booking system.
+## Run the Application
 
-The monitoring service is located at:
-services/monitor_service.py
+Start the desktop application:
 
-The monitoring system checks:
-Database
-Room service
-Booking service
+    python main_hotelapp.py
 
-Database Monitoring
+Recommended manual validation:
 
-The database monitoring function checks whether the SQLite database can be accessed successfully.
+| Step | Action | Expected result |
+|---|---|---|
+| 1 | Start the application. | The login screen opens. |
+| 2 | Register a new user. | A user account is created. |
+| 3 | Log in as the new user. | The booking interface opens. |
+| 4 | Select a room and valid dates. | A booking is created when the room is available. |
+| 5 | View bookings. | The user sees only their own reservations. |
+| 6 | Cancel a booking. | The selected booking is removed. |
+| 7 | Log in as an administrator. | The administration interface opens. |
+| 8 | Add, edit, and delete rooms. | Changes are saved in PostgreSQL. |
 
-The system executes a basic database query to confirm that the database is available.
+## Testing
 
-When the database check succeeds, the system records a successful monitoring message in the log.
+Run the full automated test suite:
 
-When the database check fails, the system records the failure.
+    python -m unittest discover -s tests -p "test_*.py" -v
 
-Room Service Monitoring
+Check the booking interface for syntax errors:
 
-The room monitoring function checks whether the rooms table can be accessed.
+    python -m py_compile bookingapp.py
 
-The system performs a query against the rooms table.
+Compile Python files while excluding the virtual environment:
 
-If the query succeeds, the room service is considered operational.
+    python -m compileall . -x "HotelEnv"
 
-If the query fails, the failure is recorded in the application log.
+A successful unittest run ends with an OK result. If local tests cannot connect to PostgreSQL, confirm that PostgreSQL is running and that the .env values are correct.
 
-Booking Service Monitoring
+## Continuous Integration
 
-The booking monitoring function checks whether the bookings table can be accessed.
+The GitHub Actions workflow is stored here:
 
-The system performs a query against the bookings table.
+    .github/workflows/ci.yml
 
-If the query succeeds, the booking service is considered operational.
+The workflow runs when code is pushed to main and when a pull request targets main.
 
-If the query fails, the failure is recorded in the application log.
+| CI stage | Purpose |
+|---|---|
+| Checkout | Downloads repository code into the runner. |
+| Python setup | Uses Python 3.12. |
+| PostgreSQL service | Starts a temporary database for tests. |
+| Environment configuration | Provides safe CI database variables. |
+| Dependency installation | Installs packages from requirements.txt. |
+| Test execution | Runs the unittest test suite. |
 
-# Application Health Monitoring
+The workflow needs a PostgreSQL service and CI-only values like these:
 
-The main monitoring function combines the results of the database, room, and booking checks.
-The system reports that all systems are healthy only when all three checks succeed.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: hotel_booking
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d hotel_booking"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
-The monitoring process follows this sequence.
-Start Monitoring
-Check Database
-Check Rooms
-Check Bookings
-All Checks Successful
-Application Healthy
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_NAME: hotel_booking
+      DB_USER: postgres
+      DB_PASSWORD: postgres
 
-If one or more checks fail, the system starts the recovery process.
+These are temporary values used only in GitHub Actions. They are not production database credentials.
 
-Screenshot Application Monitoring
+## Security and Configuration
 
-Add a screenshot showing the application monitoring output here.
+The .gitignore file should include at least:
 
-## Screenshot
-Application Monitoring
+    HotelEnv/
+    __pycache__/
+    *.pyc
+    hotel.db
+    logs/
+    .env
+    backup/
 
-# System Failure Detection
+Before committing, verify that .env is ignored:
 
-The monitoring service detects failures by handling exceptions generated when database operations fail.
-Examples of failures include:
-Missing database tables
-Database connection failures
-Room service database failures
-Booking service database failures
-Detected failures are written to the application log.
+    git check-ignore -v .env
 
-## Screenshot System Failure Detection
-System Failure Detection
+Check whether .env was ever tracked:
 
-# Application Logging
+    git ls-files .env
 
-The application uses Python logging to record system activity.
-The logging implementation is located in:
-logger.py
+No output is the desired result.
 
-The log directory is:
-logs
+## SQLite to PostgreSQL Migration
 
-The main application log is:
-logs/hotel.log
+| Previous SQLite approach | Current PostgreSQL approach |
+|---|---|
+| sqlite3.connect("hotel.db") | Centralized connection through get_connection() |
+| SQLite question-mark placeholders | psycopg2 percent-s placeholders |
+| Local hotel.db file | PostgreSQL hotel_booking database |
+| Credentials in code during early development | Credentials read from .env |
 
-The logging system records different levels of application activity.
-INFO
-WARNING
-ERROR
+Legacy SQLite material can remain in the local backup folder. The backup folder is ignored so the GitHub repository focuses on the active PostgreSQL system.
 
-# Log Processing
+## Git Workflow
 
-The project includes a log processing service.
-The log processing functionality analyzes the application log and counts messages according to their logging level.
-The log processor is located at:
-services/log_service.py
+Use this reviewed workflow when publishing a change:
 
-The processor identifies:
-INFO messages
-WARNING messages
-ERROR messages
-The system then reports the current log summary.
+    git status
+    git diff
+    git add -A
+    git diff --cached --check
+    git diff --cached -- database/postgres_connection.py
+    git commit -m "Describe your change"
+    git push origin main
 
-# Example output:
-LOG SUMMARY
-INFO
-WARNING
-ERROR
+Before committing, inspect the PostgreSQL connection code and confirm that it reads the database password from environment variables instead of containing a real password.
 
-The log processor also provides a general indication of whether historical errors or warnings were found.
+After pushing, open the GitHub Actions tab and confirm that the workflow succeeds.
+
+## Troubleshooting
+
+| Problem | Likely cause | Recommended action |
+|---|---|---|
+| ModuleNotFoundError for psycopg2 | PostgreSQL driver is missing. | Add psycopg2-binary to requirements.txt and reinstall dependencies. |
+| No password supplied | DB_PASSWORD is missing or .env was not loaded. | Confirm .env values and ensure the connection module calls load_dotenv(). |
+| Password authentication failed | The local .env password is incorrect. | Verify the password using PostgreSQL, then update .env. |
+| GitHub Actions PostgreSQL socket error | CI has no database service or no DB variables. | Add the PostgreSQL service and CI environment settings to ci.yml. |
+| SQL syntax error near a question mark | SQLite placeholders remain in a PostgreSQL query. | Replace question-mark placeholders with percent-s placeholders. |
+| .env appears in Git status | Ignore rules are missing or malformed. | Run git check-ignore -v .env and correct .gitignore. |
+| CI test step is skipped | A previous CI step failed or a trigger does not match. | Inspect the first failed step in the GitHub Actions log. |
+
+## Software Engineering Practices Demonstrated
+
+| Practice | Implementation |
+|---|---|
+| Modular design | Database access and application logic are separated into packages and service modules. |
+| Configuration management | Database settings are separated from code through environment variables. |
+| Secret handling | .env is ignored by Git and real credentials are not committed. |
+| Automated testing | The repository includes unittest tests. |
+| Continuous integration | GitHub Actions runs tests in a clean environment. |
+| Database migration | The project was updated from SQLite to PostgreSQL. |
+| Failure handling | Database operations use error handling, rollback logic, monitoring, and recovery services. |
+| Version control | Git is used to review, stage, commit, and publish changes. |
+
+## Future Improvements
+
+| Improvement | Benefit |
+|---|---|
+| Add a deployed web API or dashboard | Makes the project easier to demonstrate online. |
+| Add schema migration tooling | Makes database updates repeatable across environments. |
+| Add integration tests for booking overlaps | Strengthens reservation correctness. |
+| Add code coverage reporting | Shows how much behavior is tested. |
+| Add dependency and security scanning | Improves CI security checks. |
+| Add scheduled backups and restore tests | Strengthens recovery readiness. |
+| Add administrator audit logs | Improves traceability of important changes. |
+| Package the desktop application | Makes installation easier for end users. |
+
+## Author
+
+Ekeoma Onuoha
+https://github.com/AirchildDev
+
+## Project Purpose:
+The Hotel Booking system is a practical hotel management application built with Python and Tkinter to automate room availability,reservations, cancellations, and customer booking records. It uses PostgreSQL for persistent database management and GitHub Actions CI/CD for automated code validation, making the project a practical demonstration of database integration, software developement and and DevOps practices.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
